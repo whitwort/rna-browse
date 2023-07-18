@@ -1,9 +1,30 @@
 library(shiny)
 
-shinyServer(function(input, output) {
+highlightjs <- "<script>
+                  $('pre code').each(function(i, block) { 
+                     hljs.highlightBlock(block); 
+                  })
+                </script>"
+
+shinyServer(function(input, output, session) {
   
-  db <- reactive({ 
-    d <- sources[[input$dataset]] 
+  dbs <- reactive({
+    # databases available to the current user
+    # allowed <- sapply( names(sources)
+    #                  , function(n) sources[[n]]$requireGroup %in% session$groups
+    #                  )
+    # 
+    # sources[allowed]
+    
+    # public version of the app where all sources are allowed
+    sources
+    
+  })
+  
+  db <- reactive({
+    if (is.null(input$dataset)) { return() }
+    
+    d <- dbs()[[input$dataset]] 
     
     # Convert annotation columns to links here for efficiency
     for (tblN in 1:length(d$tables)) {
@@ -24,6 +45,10 @@ shinyServer(function(input, output) {
     d
   })
   
+  output$selectDataset <- renderUI({
+    selectInput('dataset', "Dataset", choices = rev(names(dbs())))
+  })
+  
   output$menu <- renderUI({
     
     menuItems <- lapply( db()$tables
@@ -37,6 +62,7 @@ shinyServer(function(input, output) {
     args <- c( list(menuItem("Pipeline", tabName = "notebook"))
              , list(menuItem("Changes", tabName = "changes"))
              , menuItems
+             # , list(menuItem("Debug", tabName = "debug"))
              )
     
     do.call(sidebarMenu, args)
@@ -72,13 +98,23 @@ shinyServer(function(input, output) {
                     , width = 12
                     )
     
-    args <- c( list( tabItem(tabName = "notebook", fluidRow(notebox) ) )
+    args <- c( list( tabItem( tabName = "notebook"
+                            , fluidRow(notebox)
+                            , HTML(highlightjs)
+                            ) 
+                   )
              , list( tabItem(tabName = "changes", fluidRow(changebox) ) )
              , tabs
+             # , list( tabItem(tabName = "debug", textOutput('debug')) )
              )
     
     do.call(tabItems, args)
   })
+  
+  # output$debug <- renderText({
+  #   session$groups
+  #   # names(session)
+  # })
 
 })
 

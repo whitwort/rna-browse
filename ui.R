@@ -1,10 +1,12 @@
 shinyUI(bootstrapPage(
   
   dashboardPage( dashboardHeader(title = "RNA(Seq) Browser")
-               , dashboardSidebar( selectInput('dataset', "Dataset", choices = names(sources))
+               , dashboardSidebar( uiOutput('selectDataset')
                                  , uiOutput('menu')
                                  )
-               , dashboardBody( uiOutput('tabs')
+               , dashboardBody( tags$head(includeScript('highlight.min.js'))
+                              , tags$head(includeCSS('highlight.css'))
+                              , uiOutput('tabs')
                               )
                , skin = "purple"
                )

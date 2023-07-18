@@ -10,3 +10,4 @@ sources <- lapply( list.files("data", ".rds", full.names = TRUE)
                  )
 
 names(sources) <- sapply(sources, function(s) { s$name } )
+print(names(sources))

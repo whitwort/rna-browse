@@ -3,11 +3,11 @@
 Save as .rds in `data/`:
 
 ```
-list( name      = character(1)
+list( name      = 'name'
     , notebook  = list(tabName1 = html, ...)
-    , changes   = character
-    , tables    = list( list( name        = character(1)
-                            , desc        = character(1)
+    , changes   = 'changes' # as markdown
+    , tables    = list( list( name        = 'name'
+                            , desc        = 'description'
                             , series      = list(Series1 = c('colName1', ...))
                             , annotations = c('colName1', ...)
                             , links       = list( colName = function(s) { url }
@@ -17,5 +17,6 @@ list( name      = character(1)
                             )
                       , ...
                       )
+    , requireGroup = c('groupname1', ...)
     )
 ```

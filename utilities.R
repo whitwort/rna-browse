@@ -10,7 +10,10 @@ packageHTML <- function(file) {
 }
 
 pushLive <- function(path = "live/") {
-  files <- c("server.R", "ui.R", "global.R")
+  files <- c( list.files(pattern = "*.R")
+            , list.files(pattern = "*.js")
+            , list.files(pattern = "*.css")
+            )
   file.copy(files, paste(path, files, sep = ""), overwrite = TRUE)
   system("touch live/restart.txt")
 }
